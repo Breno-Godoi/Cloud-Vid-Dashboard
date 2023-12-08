@@ -1,0 +1,131 @@
+:root {
+  --color1: #7cb695;
+  --color2: #d16b42;
+  --header: #d8ba8e;
+  --color3: #322315;
+  --color4: #946e45;
+  --color5: #91c07d;
+  --color6: #ce5c2fbe;
+  --text: #efefef;
+}
+
+* {
+  text-decoration: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Kanit", Arial, sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: var(--color6);
+  padding-top: 3vh;
+  padding-bottom: 3vh;
+}
+
+.logo {
+  margin-right: 20px;
+}
+
+.logo img {
+  height: 50px;
+  max-width: 100%;
+  height: auto;
+  padding: 10px;
+  display: inline-block;
+  border-radius: 10px;
+}
+
+.titles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align titles to the left */
+}
+
+header h1 {
+  font-size: 5vw;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+header h2 {
+  font-size: 2vw;
+  font-family: "Handlee", Arial, sans-serif;
+  margin-top: 5px;
+}
+
+#header-image {
+  max-width: 100%; /* Ensure the image does not exceed its container */
+  height: auto;
+  display: block;
+}
+
+main {
+  width: 95%;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+
+  padding-top: 5vh;
+  padding-bottom: 5vh;
+}
+
+fieldset {
+  width: 30%;
+  min-height: 10vh;
+
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-bottom: 3vh;
+}
+
+fieldset legend {
+  text-align: center;
+}
+
+fieldset legend button {
+  font-size: 1.1vw;
+  font-weight: 900;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+  border-radius: 5px;
+
+  background-color: var(--header);
+}
+
+fieldset legend button i {
+  font-size: 1.1vw;
+  font-weight: 900;
+}
+
+h3 {
+  font-family: "Handlee", Arial, sans-serif;
+}
+
+.btn-primary {
+  background-color: #91c07d;
+  border: 1px solid #769c60;
+}
+
+.btn-primary:hover {
+  background-color: #769c60;
+  border-color: #769c60;
+}
+
+.two-wide {
+  width: 60% !important;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}

@@ -1,0 +1,68 @@
+#donut-chart{
+    width: 100%;
+    height: auto;
+    display: inline-block;
+}
+#donut-legend{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    
+    padding-top: 5vh;
+}
+.donut-legend-item{
+    display: flex;
+    align-items: center;
+    width: 47%;
+}
+.donut-legend-item div{
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+.donut{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+.donut-radio{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    
+    width: 100%;
+}
+.donut-radio input{
+    margin-right: 0.25rem;
+}
+.donut-radio label{
+    margin-right: 0.75rem;
+}
+.donut-title{
+    font-size: 2vw;
+}
+.donut-portion-name{
+    font-size: 1.3vw;
+}
+@media screen and (max-width: 1024px){
+    
+}
+@media screen and (max-width: 768px){
+    .donut-portion-name{
+        font-size: 3.5vw;
+    }
+    .donut-title{
+        font-size: 4.5vw;
+    }
+}
+@media screen and (max-width: 420px){
+    .donut-title{
+        font-size: 5.5vw;
+    }    
+}

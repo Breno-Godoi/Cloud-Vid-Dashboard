@@ -1,0 +1,54 @@
+.threeCard{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+
+    width: 90%;
+
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+}
+.threeCard article{
+    height: 30vh;
+    width: 30%;
+    background-color: rgba(0, 0, 0, 0.139);
+
+    border-radius: 5px;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.threeCard article h3{
+    background-color: var(--header);
+    width: 100%;
+
+    font-size: 1.5vw;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.threeCard .text{
+    font-size: 1.3vw;
+}
+.arrowBtn{
+    width: 20%;
+
+    font-size: 1.3vw;
+    font-weight: 900;
+
+    outline: none;
+    padding: 0.25rem;
+    border-radius: 5px;
+}

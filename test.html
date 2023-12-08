@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stacked Bar Chart with Categories</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  
+  <script>
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 10, right: 30, bottom: 20, left: 50},
+        width = 460 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+    
+    // append the svg object to the body of the page
+    var svg = d3.select("body")
+      .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+    
+    // Hardcoded dataset
+    var data = [
+      {group: "A", value1: 10, value2: 20},
+      {group: "B", value1: 15, value2: 25},
+      {group: "C", value1: 5, value2: 15}
+    ];
+    
+    // List of subgroups
+    var subgroups = ['value1', 'value2'];
+    
+    // List of groups
+    var groups = data.map(function(d) { return d.group; });
+    
+    // Add X axis
+    var x = d3.scaleBand()
+        .domain(groups)
+        .range([0, width])
+        .padding([0.2]);
+    
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x).tickSizeOuter(0));
+    
+    // Add Y axis
+    var y = d3.scaleLinear()
+        .domain([0, 60])
+        .range([height, 0]);
+    
+    svg.append("g")
+        .call(d3.axisLeft(y));
+    
+    // Color palette
+    var color = d3.scaleOrdinal()
+        .domain(subgroups)
+        .range(['#7CB695', '#d16b42']);
+    
+    // Stack the data
+    var stackedData = d3.stack().keys(subgroups)(data);
+    
+    // Show the bars
+    svg.append("g")
+        .selectAll("g")
+        .data(stackedData)
+        .enter().append("g")
+        .attr("fill", function(d) { // Chooses the color from the scale.
+          return color(d.key); 
+        })
+        .selectAll("rect")
+        .data(function(d) { 
+          return d; 
+        })
+        .enter().append("rect")
+        .attr("x", function(d) { 
+          return x(d.data.group); 
+        })
+        .attr("y", function(d) { // Makes sure that the bars are sitting on top of each other.
+          return y(d[1]); 
+        })
+        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+        .attr("width", x.bandwidth());
+  </script>
+</body>
+</html>
