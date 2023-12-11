@@ -13,7 +13,7 @@ d3.csv("./files/top_100_youtubers.csv").then(function (data) {
   });
 
   // set the dimensions and margins of the graph
-  let margin = { top: 20, right: 20, bottom: 30, left: 40 };
+  let margin = { top: 40, right: 20, bottom: 50, left: 60 }; // Increased top and left margins
   let containerWidth = document.getElementById("map-chart").offsetWidth;
   let width = containerWidth - margin.left - margin.right;
   let height = 500 - margin.top - margin.bottom;
@@ -52,7 +52,9 @@ d3.csv("./files/top_100_youtubers.csv").then(function (data) {
     .call(d3.axisBottom(xScale))
     .selectAll("text")
     .attr("transform", "rotate(-45)")
-    .style("text-anchor", "end");
+    .style("text-anchor", "end")
+    .attr("dx", "-0.5em") // Adjust the x position for better rotation
+    .attr("dy", "0.5em"); // Adjust the y position for better rotation
 
   // Create a scale for the y-axis
   const yScale = d3
@@ -60,31 +62,63 @@ d3.csv("./files/top_100_youtubers.csv").then(function (data) {
     .domain([0, d3.max(countsArray, (d) => d.Count)])
     .range([height, 0]);
 
-  // Create y-axis
-  svg.append("g").call(d3.axisLeft(yScale));
+  // Create area generator
+  const area = d3.area()
+    .x((d) => xScale(d.Country) + xScale.bandwidth() / 2)
+    .y0(height)
+    .y1((d) => yScale(d.Count));
 
-  // Create bars
-  svg
-    .selectAll(".bar")
-    .data(countsArray)
-    .enter()
-    .append("rect")
-    .attr("class", "bar")
-    .attr("x", 0)
-    .attr("width", width)
-    .attr("y", (d) => yScale(d.Count))
-    .attr("height", (d) => height - yScale(d.Count))
-    .attr("fill", (d) => color(d.Country));
+  // Create area chart
+  svg.append("path")
+    .data([countsArray])
+    .attr("class", "area")
+    .attr("d", area)
+    .attr("fill", getComputedStyle(document.documentElement).getPropertyValue("--color3"));
 
   // Add labels
-  svg
-    .selectAll("text")
+  svg.selectAll(".label")
     .data(countsArray)
     .enter()
     .append("text")
     .text((d) => d.Country)
-    .attr("x", 10)
-    .attr("y", (d) => yScale(d.Count) + 20)
+    .attr("x", (d) => xScale(d.Country) + xScale.bandwidth() / 2)
+    .attr("y", (d) => yScale(d.Count) - 10) // Adjust y position for better visibility
     .attr("fill", (d) => color(d.Country))
-    .style("font-size", "12px");
+    .style("font-size", "12px")
+    .attr("text-anchor", "middle");
+
+  // Create y-axis
+  svg.append("g")
+    .call(d3.axisLeft(yScale));
+
+  // Add responsiveness on window resize
+  window.addEventListener('resize', function () {
+    containerWidth = document.getElementById("map-chart").offsetWidth;
+    width = containerWidth - margin.left - margin.right;
+
+    // Update SVG container width
+    svg.attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`);
+
+    // Update x-axis scale range
+    xScale.range([0, width]);
+
+    // Update x-axis
+    svg.select(".x-axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(xScale))
+      .selectAll("text")
+      .attr("transform", "rotate(-45)")
+      .style("text-anchor", "end")
+      .attr("dx", "-0.5em")
+      .attr("dy", "0.5em");
+
+    // Update area chart
+    svg.select(".area")
+      .attr("d", area);
+
+    // Update labels
+    svg.selectAll(".label")
+      .attr("x", (d) => xScale(d.Country) + xScale.bandwidth() / 2);
+
+  });
 });

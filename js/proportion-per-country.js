@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-let margin = { top: 10, right: 30, bottom: 60, left: 50 };
+let margin = { top: 20, right: 30, bottom: 60, left: 50 }; // Increased top margin
 let containerWidth = document.getElementById("proportion-chart").offsetWidth;
 let width = containerWidth - margin.left - margin.right;
 let height = 400 - margin.top - margin.bottom;
@@ -26,7 +26,7 @@ function updateChart() {
   svg.select(".x-axis").call(d3.axisBottom(x).tickSizeOuter(0))
     .selectAll("text")
     .attr("transform", "rotate(-35)")
-    .style("font-size", "0.5vw")
+    .style("font-size", "0.8vw") // Adjust font size for better visibility
     .style("text-anchor", "end");
 
   // Update the bars
@@ -61,7 +61,7 @@ d3.csv("files/top_100_youtubers.csv").then(function (data) {
     .call(d3.axisBottom(x).tickSizeOuter(0))
     .selectAll("text")
     .attr("transform", "rotate(-35)")
-    .style("font-size", "0.5vw")
+    .style("font-size", "0.8vw") // Adjust font size for better visibility
     .style("text-anchor", "end");
 
   // Stack the data per subgroup

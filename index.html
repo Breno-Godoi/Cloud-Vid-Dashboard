@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="./styles/main.css">
     <link rel="stylesheet" href="./styles/proportion.css">
     <link rel="stylesheet" href="./styles/donut-chart.css">
-    <link rel="stylesheet" href="./styles/piechart.css">
+    <link rel="stylesheet" href="./styles/pie-chart.css">
     <link rel="stylesheet" href="./styles/bubble-chart.css">
     <link rel="stylesheet" href="./styles/cards.css">
 
@@ -58,12 +58,13 @@
     <main>
 
         <!-- Number of YouTubers in Each Category -->
-        <fieldset>
+        <fieldset id="category-pie-chart-container" onclick="togglePieChart()">
             <legend><button>Number of YouTubers in Each Category</button></legend>
-            <div id="category-pie-chart"></div>
-            <div id="category-legend"></div> <!-- Add a container for the legend -->
+            <article id="category-pie-container" style="display: none;">
+                <div id="category-pie-chart"></div>
+                <div id="category-legend" class="category-legend-tooltip"></div>
+            </article>
         </fieldset>
-
 
         <!-- Top 6 Incomes Per Country -->
         <fieldset>

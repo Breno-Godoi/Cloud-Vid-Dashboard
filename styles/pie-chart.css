@@ -1,0 +1,87 @@
+/* styles/pie-chart.css */
+
+#category-pie-chart {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the pie chart horizontally */
+    margin-top: 20px; /* Add space between the chart and the upper label */
+}
+
+#category-legend {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center; /* Center the legend items */
+    align-items: flex-start;
+    
+    padding-top: 10px; /* Reduce space between the chart and the legend */
+}
+
+.category-legend-item {
+    display: flex;
+    align-items: center;
+    width: 33%; /* Set the width to 33% for three items in a row */
+    box-sizing: border-box; /* Include padding and border in width calculation */
+    padding: 0 10px; /* Add some padding for spacing between legend items */
+}
+
+.category-legend-item div {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.category-pie {
+    display: flex;
+    flex-direction: column; /* Adjust the pie chart container to a column layout */
+    align-items: center; /* Center the pie chart horizontally */
+}
+
+.category-radio {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    
+    width: 100%;
+}
+
+.category-radio input {
+    margin-right: 0.25rem;
+}
+
+.category-radio label {
+    margin-right: 0.75rem;
+}
+
+.category-title {
+    font-size: 2vw;
+    margin-bottom: 15px; /* Increase margin at the bottom of the title */
+}
+
+.category-slice-name {
+    font-size: 1.3vw;
+}
+
+@media screen and (max-width: 1024px) {
+    /* Add responsive styles for max-width 1024px if needed */
+}
+
+@media screen and (max-width: 768px) {
+    .category-slice-name {
+        font-size: 3.5vw;
+    }
+
+    .category-title {
+        font-size: 4.5vw;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .category-title {
+        font-size: 5.5vw;
+    }
+}
