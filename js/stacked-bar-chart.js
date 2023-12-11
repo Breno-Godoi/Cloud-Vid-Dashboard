@@ -1,3 +1,5 @@
+//js\stacked-bar-chart.js
+
 // Check if top100data is loaded
 function mostCommonCategory() {
 

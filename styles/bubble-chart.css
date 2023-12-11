@@ -1,0 +1,22 @@
+.bubbles{
+    stroke-width: 2px;
+    stroke: var(--text);
+
+    fill: var(--color5);
+}
+.bubbles:hover {
+    stroke: var(--color4);
+}
+.bubble-tip{
+    background-color: var(--header);
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    padding: 0.5rem;
+
+    transition: all ease-in-out 0.3s;
+}

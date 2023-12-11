@@ -1,0 +1,26 @@
+/* proportion.css */
+
+#proportion-chart {
+    width: 100%;
+    min-height: 400px;
+    margin-top: 20px;
+    background-color: #f8f8f8; /* Set background color as needed */
+    border: 1px solid #ccc; /* Set border styles as needed */
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  #proportion-chart svg {
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .proportion-chart-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Add any additional styles as needed */
+  

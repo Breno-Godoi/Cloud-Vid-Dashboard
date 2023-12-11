@@ -1,5 +1,6 @@
-function totalIncomeCard(){
-    // Get total income for each quarter.
+// total-income-card.js
+function totalIncomeCard() {
+    // Your existing totalIncomeCard code goes here
     let totalIncomeQ1 = d3.sum(top100data, d => +d["Income q1"]);
     let totalIncomeQ2 = d3.sum(top100data, d => +d["Income q2"]);
     let totalIncomeQ3 = d3.sum(top100data, d => +d["Income q3"]);
@@ -16,6 +17,3 @@ function totalIncomeCard(){
     document.getElementById("totalq3").textContent = `Quarter 3: $${formatNumberWithCommas(totalIncomeQ3.toFixed(2))}`;
     document.getElementById("totalq4").textContent = `Quarter 4: $${formatNumberWithCommas(totalIncomeQ4.toFixed(2))}`;
 }
-
-// To fix data loading after this.
-setTimeout(totalIncomeCard, 20);

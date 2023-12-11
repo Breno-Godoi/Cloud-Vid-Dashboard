@@ -1,3 +1,5 @@
+<!--index.html-->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,7 +10,10 @@
 
     <!--Styles-->
     <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/proportion.css">
     <link rel="stylesheet" href="./styles/donut-chart.css">
+    <link rel="stylesheet" href="./styles/piechart.css">
+    <link rel="stylesheet" href="./styles/bubble-chart.css">
     <link rel="stylesheet" href="./styles/cards.css">
 
     <!--Outside Resources-->
@@ -20,8 +25,12 @@
 
     <!--JavaScript-->
     <script src="./js/readData.js" defer></script>
+    <script src="./js/proportion-per-country.js" defer></script>
+    <script src="./js/category-pie-chart.js" defer></script>
     <script src="./js/donut-chart.js"></script>
-    <script src="./js/stacked-bar-chart.js" defer></script>
+    <script src="./js/stacked-bar-chart.js"></script>
+    <script src="./js/bubble-chart.js" defer></script>
+    <script src="./js/most-youtubers.js" defer></script>
     <script src="./js/total-income-card.js" defer></script>
     <script src="./js/top-channel-card.js" defer></script>
     <script src="./js/top-catagory-card.js" defer></script>
@@ -47,6 +56,24 @@
     </section>
 
     <main>
+
+        <!-- Number of YouTubers in Each Category -->
+        <fieldset>
+            <legend><button>Number of YouTubers in Each Category</button></legend>
+            <div id="category-pie-chart"></div>
+            <div id="category-legend"></div> <!-- Add a container for the legend -->
+        </fieldset>
+
+
+        <!-- Proportion of Top 100 YouTube Channels in Each Country -->
+        <fieldset>
+            <legend><button onclick="updateStackedBarChart();">Proportion of Top 100 YouTube Channels in Each
+                    Country</button></legend>
+            <div id="proportion-chart"></div> <!-- Add this line to include the chart container -->
+        </fieldset>
+
+
+        <!-- Top 6 Incomes Per Country -->
         <fieldset>
             <legend><button onclick="toggleDonut()">Top 6 Incomes Per Country</button></legend>
             <article id="donut-container" style="display: none;">
@@ -67,6 +94,7 @@
                 </div>
             </article>
         </fieldset>
+
         <fieldset class="two-wide">
             <legend><button onclick="mostCommonCategory();">Most Common Categories</button></legend>
             <div id="stacked-bar-chart"></div>
@@ -91,8 +119,29 @@
                 <h3>Most Popular Catagory</h3>
                 <p id="mostPopularCatagoryCard" class="text"></p>
             </article>
+
+            <!-- Followers to Year Started -->
+            <fieldset>
+                <legend><button onclick="getStartedYearData();">Followers to Year Started</button></legend>
+                <div id="bubble-chart"></div>
+            </fieldset>
+
+            <!-- Country with the Most YouTubers in the Top 100 List -->
+            <fieldset>
+                <legend><button>Country with the Most YouTubers in the Top 100 List</button></legend>
+                <div id="map-chart"></div>
+            </fieldset>
         </section>
+
+
     </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>&copy; Cloud Vid 2023</p>
+        </div>
+    </footer>
 </body>
 
 </html>

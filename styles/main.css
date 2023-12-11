@@ -129,3 +129,20 @@ h3 {
   padding-top: 2vh;
   padding-bottom: 2vh;
 }
+
+/* Style for the footer */
+.site-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #d8ba8e;
+  color: #322315; /* Text color */
+  text-align: center;
+  padding: 5px 0;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
