@@ -18,12 +18,12 @@ function findMostCommonCategory() {
 
 // Display the most common category
 function displayMostCommonCategory() {
-    let mostCommonCategory = findMostCommonCategory();
-    if (mostCommonCategory !== null) {
-        document.getElementById("mostPopularCatagoryCard").textContent = mostCommonCategory;
-    } else {
-        console.error('Most common category is null or undefined.');
-    }
+  let mostCommonCategory = findMostCommonCategory();
+  if (mostCommonCategory !== null) {
+      document.getElementById("mostPopularCatagoryCard").textContent = mostCommonCategory;
+  } else {
+      console.error('Most common category is null or undefined.');
+  }
 }
 
 // Fix data loading before this.

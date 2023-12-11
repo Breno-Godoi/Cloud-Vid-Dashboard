@@ -4,7 +4,12 @@ let topChannelIndex = 0;
 
 function topChannelCard(){
     // Find top ChannelName
-    document.getElementById("topChannelCard").innerHTML = "#" + (topChannelIndex+1) + " " + top100data[topChannelIndex].ChannelName;
+    // Ensure data is loaded
+    if (top100data && top100data.length > topChannelIndex) {
+        document.getElementById("topChannelCard").innerHTML = "#" + (topChannelIndex + 1) + " " + top100data[topChannelIndex].ChannelName;
+    } else {
+        console.error('Data not loaded or index out of range');
+    }
 }
 
 // Fix data loading after this.

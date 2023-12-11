@@ -1,124 +1,83 @@
-// Load the data from the CSV file
-d3.csv("./files/top_100_youtubers.csv").then(function (data) {
-  // Count the number of YouTubers in each country
-  const countryCounts = {};
-  data.forEach(function (d) {
-    const country = d.Country;
-    countryCounts[country] = (countryCounts[country] || 0) + 1;
-  });
+// Global variable to track chart visibility
+let chartVisible = false;
 
-  // Convert counts to an array of objects
-  const countsArray = Object.keys(countryCounts).map(function (country) {
-    return { Country: country, Count: countryCounts[country] };
-  });
+function toggleChartVisibility() {
+    chartVisible = !chartVisible;
+    let chartContainer = document.getElementById("map-chart");
+    chartContainer.style.display = chartVisible ? "block" : "none";
 
-  // set the dimensions and margins of the graph
-  let margin = { top: 40, right: 20, bottom: 50, left: 60 }; // Increased top and left margins
-  let containerWidth = document.getElementById("map-chart").offsetWidth;
-  let width = containerWidth - margin.left - margin.right;
-  let height = 500 - margin.top - margin.bottom;
+    if (chartVisible) {
+        // Process and visualize the data only if the chart is not already created
+        if (!chartContainer.hasChildNodes()) {
+            createChart();
+        }
+    } else {
+        // Clear the chart when hiding
+        chartContainer.innerHTML = "";
+    }
+}
 
-  // Create SVG container
-  const svg = d3
-    .select("#map-chart")
-    .append("svg")
-    .attr(
-      "viewBox",
-      `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`
-    )
-    .attr("width", "100%")
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+function createChart() {
+    // Remove any existing SVG to redraw on resize
+    d3.select("#map-chart svg").remove();
 
-  // Set the colors using CSS variables
-  let color = d3
-    .scaleOrdinal()
-    .range([
-      getComputedStyle(document.documentElement).getPropertyValue("--color3"),
-      getComputedStyle(document.documentElement).getPropertyValue("--color4"),
-    ]);
+    // Get the width of the container
+    let containerWidth = document.getElementById('map-chart').clientWidth;
 
-  // Create a scale for the x-axis
-  const xScale = d3
-    .scaleBand()
-    .domain(countsArray.map((d) => d.Country))
-    .range([0, width])
-    .padding(0.2); // Adjust the padding as needed
+    // Chart dimensions and margins
+    let margin = { top: 20, right: 30, bottom: 40, left: 90 },
+        width = containerWidth - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
 
-  // Create x-axis
-  svg
-    .append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale))
-    .selectAll("text")
-    .attr("transform", "rotate(-45)")
-    .style("text-anchor", "end")
-    .attr("dx", "-0.5em") // Adjust the x position for better rotation
-    .attr("dy", "0.5em"); // Adjust the y position for better rotation
+    // Append the svg object to the chart container
+    const svg = d3.select("#map-chart")
+        .append("svg")
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // Create a scale for the y-axis
-  const yScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(countsArray, (d) => d.Count)])
-    .range([height, 0]);
+    // Assuming 'top100data' is an array of objects from your CSV file
+    let countryCounts = d3.rollup(top100data, v => v.length, d => d.Country);
 
-  // Create area generator
-  const area = d3.area()
-    .x((d) => xScale(d.Country) + xScale.bandwidth() / 2)
-    .y0(height)
-    .y1((d) => yScale(d.Count));
+    // Convert the Map to an array of objects
+    let data = Array.from(countryCounts, ([Country, Count]) => ({Country, Count}));
 
-  // Create area chart
-  svg.append("path")
-    .data([countsArray])
-    .attr("class", "area")
-    .attr("d", area)
-    .attr("fill", getComputedStyle(document.documentElement).getPropertyValue("--color3"));
+    // Add X axis
+    let x = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.Count)])
+        .range([0, width]);
+    svg.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("transform", "translate(-10,0)rotate(-45)")
+        .style("text-anchor", "end");
 
-  // Add labels
-  svg.selectAll(".label")
-    .data(countsArray)
-    .enter()
-    .append("text")
-    .text((d) => d.Country)
-    .attr("x", (d) => xScale(d.Country) + xScale.bandwidth() / 2)
-    .attr("y", (d) => yScale(d.Count) - 10) // Adjust y position for better visibility
-    .attr("fill", (d) => color(d.Country))
-    .style("font-size", "12px")
-    .attr("text-anchor", "middle");
+    // Y axis
+    let y = d3.scaleBand()
+        .range([0, height])
+        .domain(data.map(d => d.Country))
+        .padding(.1);
+    svg.append("g")
+        .call(d3.axisLeft(y))
 
-  // Create y-axis
-  svg.append("g")
-    .call(d3.axisLeft(yScale));
+    // Bars
+    svg.selectAll("myRect")
+        .data(data)
+        .join("rect")
+        .attr("x", x(0))
+        .attr("y", d => y(d.Country))
+        .attr("width", d => x(d.Count))
+        .attr("height", y.bandwidth())
+        .attr("fill", "#69b3a2");
+}
 
-  // Add responsiveness on window resize
-  window.addEventListener('resize', function () {
-    containerWidth = document.getElementById("map-chart").offsetWidth;
-    width = containerWidth - margin.left - margin.right;
+// Initially hide the chart
+document.getElementById("map-chart").style.display = "none";
 
-    // Update SVG container width
-    svg.attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`);
-
-    // Update x-axis scale range
-    xScale.range([0, width]);
-
-    // Update x-axis
-    svg.select(".x-axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(xScale))
-      .selectAll("text")
-      .attr("transform", "rotate(-45)")
-      .style("text-anchor", "end")
-      .attr("dx", "-0.5em")
-      .attr("dy", "0.5em");
-
-    // Update area chart
-    svg.select(".area")
-      .attr("d", area);
-
-    // Update labels
-    svg.selectAll(".label")
-      .attr("x", (d) => xScale(d.Country) + xScale.bandwidth() / 2);
-
-  });
+// Redraw chart on window resize
+window.addEventListener("resize", function() {
+    if (chartVisible) {
+        createChart();
+    }
 });
