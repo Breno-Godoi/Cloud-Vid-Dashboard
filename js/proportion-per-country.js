@@ -1,127 +1,121 @@
-//js/proportion-per-country.js
+// set the dimensions and margins of the graph
+let margin = { top: 10, right: 30, bottom: 60, left: 50 };
+let containerWidth = document.getElementById("proportion-chart").offsetWidth;
+let width = containerWidth - margin.left - margin.right;
+let height = 400 - margin.top - margin.bottom;
 
-// Check if top100data is loaded
-function drawProportionPerCountryChart() {
-  if (top100data) {
-    drawChart(top100data);
-  } else {
-    d3.csv("./files/top_100_youtubers.csv")
-      .then(function (data) {
-        top100data = data;
-        drawChart(data);
-      })
-      .catch(function (error) {
-        console.error("Error loading the data: " + error);
-      });
-  }
+// append the svg object to the body of the page
+let svg = d3
+  .select("#proportion-chart")
+  .append("svg")
+  .attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+  .attr("width", "100%")
+  .append("g")
+  .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-  function drawChart(data) {
-    // Group data by country and count categories
-    const groupedData = d3.group(data, d => d.Country);
-    const categories = Array.from(new Set(data.map(d => d.Category)));
-    
-    // Set up dimensions and margins
-    const margin = { top: 10, right: 30, bottom: 60, left: 50 };
-    const containerWidth = document.getElementById("proportion-chart").offsetWidth;
-    const width = containerWidth - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+// Function to update chart on resize
+function updateChart() {
+  containerWidth = document.getElementById("proportion-chart").offsetWidth;
+  width = containerWidth - margin.left - margin.right;
 
-    // Create the SVG
-    const svg = d3
-      .select("#proportion-chart")
-      .append("svg")
-      .attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
-      .attr("width", "100%")
-      .append("g")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`);
+  // Update the SVG's dimensions
+  svg.attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`);
 
-    // X-axis scale
-    const xScale = d3.scaleBand()
-      .domain(Array.from(groupedData.keys()))
-      .range([0, width])
-      .padding(0.2);
+  // Update X scale and axis
+  x.range([0, width]);
+  svg.select(".x-axis").call(d3.axisBottom(x).tickSizeOuter(0))
+    .selectAll("text")
+    .attr("transform", "rotate(-35)")
+    .style("font-size", "0.5vw")
+    .style("text-anchor", "end");
 
-    // Y-axis scale
-    const yScale = d3.scaleLinear()
-      .domain([0, d3.max(data, d => categories.map(cat => +d[cat] || 0).reduce((a, b) => a + b, 0))])
-      .range([height, 0]);
-
-    // Color scale
-    const color = d3.scaleOrdinal()
-      .domain(categories)
-      .range(d3.schemeCategory10);
-
-    // Draw the stacked bars
-    svg.selectAll(".stacked-bar")
-      .data(groupedData)
-      .enter()
-      .append("g")
-      .attr("class", "stacked-bar")
-      .attr("transform", d => `translate(${xScale(d[0])},0)`)
-      .selectAll("rect")
-      .data(d => categories.map(cat => ({ key: cat, value: +d[1][0][cat] || 0 })))
-      .enter()
-      .append("rect")
-      .attr("x", d => xScale.bandwidth() / categories.length * categories.indexOf(d.key))
-      .attr("y", d => yScale(d.value))
-      .attr("width", xScale.bandwidth() / categories.length)
-      .attr("height", d => height - yScale(d.value))
-      .attr("fill", d => color(d.key));
-    
-    // X-axis
-    svg.append("g")
-      .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(xScale).tickSizeOuter(0))
-      .selectAll("text")
-      .attr("transform", "rotate(-35)")
-      .style("font-size", "0.5vw")
-      .style("text-anchor", "end");
-
-    // Y-axis
-    svg.append("g")
-      .call(d3.axisLeft(yScale));
-
-    // X-axis Title
-    svg.append("text")
-      .attr("x", width / 2)
-      .attr("y", height + margin.bottom - 5)
-      .attr("text-anchor", "middle")
-      .style("font-size", "14px")
-      .text("Country");
-
-    // Y-axis Title
-    svg.append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left)
-      .attr("x", 0 - height / 2)
-      .attr("dy", "1em")
-      .style("font-size", "14px")
-      .style("text-anchor", "middle")
-      .text("Count");
-
-    // Legend
-    const legend = svg.append("g")
-      .attr("class", "legend")
-      .attr("transform", `translate(${width - 100}, 0)`);
-
-    legend.selectAll("rect")
-      .data(categories)
-      .enter().append("rect")
-      .attr("y", (d, i) => i * 20)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", d => color(d));
-
-    legend.selectAll("text")
-      .data(categories)
-      .enter().append("text")
-      .attr("y", (d, i) => i * 20 + 9)
-      .attr("x", 25)
-      .style("text-anchor", "start")
-      .style("font-size", "12px")
-      .text(d => d);
-  }
+  // Update the bars
+  svg.selectAll("rect")
+    .attr("x", function (d) {
+      return x(d.data.Country);
+    })
+    .attr("width", x.bandwidth());
 }
 
-// Call the function to draw the chart
-drawProportionPerCountryChart();
+// Load data from CSV
+d3.csv("files/top_100_youtubers.csv").then(function (data) {
+  // Check if data is loaded successfully
+  if (!data || data.length === 0) {
+    console.error("No data loaded");
+    return;
+  }
+
+  // List of subgroups = header of the csv files = other than 'Country' column
+  var subgroups = data.columns ? data.columns.slice(1) : [];
+
+  // List of groups = unique countries
+  var groups = Array.from(new Set(data.map(function (d) { return d.Country; })));
+
+  // Add X axis
+  var x = d3.scaleBand().domain(groups).range([0, width]).padding([0.2]);
+
+  svg
+    .append("g")
+    .attr("class", "x-axis") // Add a class to the x-axis for easy access during update
+    .attr("transform", `translate(0, ${height})`)
+    .call(d3.axisBottom(x).tickSizeOuter(0))
+    .selectAll("text")
+    .attr("transform", "rotate(-35)")
+    .style("font-size", "0.5vw")
+    .style("text-anchor", "end");
+
+  // Stack the data per subgroup
+  var stackedData = d3.stack().keys(subgroups)(data);
+
+  // Find the maximum value in the stacked data
+  var maxY = d3.max(stackedData, function (layer) {
+    return d3.max(layer, function (d) {
+      return d[1];
+    });
+  });
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([0, maxY])
+    .range([height, 0]);
+
+  svg.append("g").call(d3.axisLeft(y));
+
+  // Color palette = one color per subgroup
+  var color = d3.scaleOrdinal()
+    .domain(subgroups)
+    .range(['#7CB695', '#d16b42']);
+
+  // Show the bars
+  svg
+    .append("g")
+    .selectAll("g")
+    .data(stackedData)
+    .enter()
+    .append("g")
+    .attr("fill", function (d) {
+      return color(d.key);
+    })
+    .selectAll("rect")
+    .data(function (d) {
+      return d;
+    })
+    .enter()
+    .append("rect")
+    .attr("x", function (d) {
+      return x(d.data.Country);
+    })
+    .attr("y", function (d) {
+      return y(d[1]);
+    })
+    .attr("height", function (d) {
+      return y(d[0]) - y(d[1]);
+    })
+    .attr("width", x.bandwidth());
+
+  // Call the updateChart function on window resize
+  window.addEventListener('resize', updateChart);
+
+}).catch(function (error) {
+  console.error("Error loading data:", error);
+});
