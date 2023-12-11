@@ -1,16 +1,11 @@
 //js/proportion-per-country.js
 
-// Set up color scale
-const color = d3.scaleOrdinal()
-    .domain(['category1', 'category2', 'category3'])
-    .range(['#1f77b4', '#ff7f0e', '#2ca02c']);
-
 // Check if top100data is loaded
 function drawProportionPerCountryChart() {
   if (top100data) {
     drawChart(top100data);
   } else {
-    d3.csv("files/top_100_youtubers.csv")
+    d3.csv("./files/top_100_youtubers.csv")
       .then(function (data) {
         top100data = data;
         drawChart(data);
@@ -21,84 +16,112 @@ function drawProportionPerCountryChart() {
   }
 
   function drawChart(data) {
-    const stackedData = data.map((d) => ({
-      country: d.Country,
-      category1: +d.Category1,
-      category2: +d.Category2,
-      category3: +d.Category3,
-    }));
+    // Group data by country and count categories
+    const groupedData = d3.group(data, d => d.Country);
+    const categories = Array.from(new Set(data.map(d => d.Category)));
+    
+    // Set up dimensions and margins
+    const margin = { top: 10, right: 30, bottom: 60, left: 50 };
+    const containerWidth = document.getElementById("proportion-chart").offsetWidth;
+    const width = containerWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
-    // Calculate the cumulative sum for each category
-    stackedData.forEach((d) => {
-      let total = d.category1 + d.category2 + d.category3;
-      let cumulative = 0;
-      d.cumulativeData = [
-        { key: "category1", proportion: (cumulative += d.category1) / total },
-        { key: "category2", proportion: (cumulative += d.category2) / total },
-        { key: "category3", proportion: (cumulative += d.category3) / total },
-      ];
-    });
-
-    const width = 600;
-    const height = 400;
-
+    // Create the SVG
     const svg = d3
       .select("#proportion-chart")
       .append("svg")
-      .attr("width", width)
-      .attr("height", height);
+      .attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+      .attr("width", "100%")
+      .append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    const xScale = d3
-      .scaleBand()
-      .domain(stackedData.map((d) => d.country))
+    // X-axis scale
+    const xScale = d3.scaleBand()
+      .domain(Array.from(groupedData.keys()))
       .range([0, width])
-      .padding(0.1);
+      .padding(0.2);
 
-    const yScale = d3
-      .scaleLinear()
-      .domain([0, 1]) // Update the domain based on your data
+    // Y-axis scale
+    const yScale = d3.scaleLinear()
+      .domain([0, d3.max(data, d => categories.map(cat => +d[cat] || 0).reduce((a, b) => a + b, 0))])
       .range([height, 0]);
 
-    const color = d3
-      .scaleOrdinal()
-      .domain(["category1", "category2", "category3"])
-      .range(["#1f77b4", "#ff7f0e", "#2ca02c"]); // Adjust colors as needed
+    // Color scale
+    const color = d3.scaleOrdinal()
+      .domain(categories)
+      .range(d3.schemeCategory10);
 
-    // Draw the stacked areas
-    const area = d3
-      .area()
-      .x((d) => xScale(d.data.country))
-      .y0((d) => yScale(d[0].proportion))
-      .y1((d) => yScale(d[1].proportion))
-      .curve(d3.curveBasis);
-
-    svg
-      .selectAll(".stacked-area")
-      .data(
-        d3.stack().keys(["category1", "category2", "category3"])(
-          stackedData.map((d) => d.cumulativeData)
-        )
-      )
+    // Draw the stacked bars
+    svg.selectAll(".stacked-bar")
+      .data(groupedData)
       .enter()
-      .append("path")
-      .attr("class", "stacked-area")
-      .attr("d", area)
-      .attr("fill", (d) => color(d.key));
+      .append("g")
+      .attr("class", "stacked-bar")
+      .attr("transform", d => `translate(${xScale(d[0])},0)`)
+      .selectAll("rect")
+      .data(d => categories.map(cat => ({ key: cat, value: +d[1][0][cat] || 0 })))
+      .enter()
+      .append("rect")
+      .attr("x", d => xScale.bandwidth() / categories.length * categories.indexOf(d.key))
+      .attr("y", d => yScale(d.value))
+      .attr("width", xScale.bandwidth() / categories.length)
+      .attr("height", d => height - yScale(d.value))
+      .attr("fill", d => color(d.key));
+    
+    // X-axis
+    svg.append("g")
+      .attr("transform", `translate(0, ${height})`)
+      .call(d3.axisBottom(xScale).tickSizeOuter(0))
+      .selectAll("text")
+      .attr("transform", "rotate(-35)")
+      .style("font-size", "0.5vw")
+      .style("text-anchor", "end");
 
-    // Add axes
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale);
+    // Y-axis
+    svg.append("g")
+      .call(d3.axisLeft(yScale));
 
-    svg.append("g").attr("transform", `translate(0, ${height})`).call(xAxis);
+    // X-axis Title
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom - 5)
+      .attr("text-anchor", "middle")
+      .style("font-size", "14px")
+      .text("Country");
 
-    svg.append("g").call(yAxis);
+    // Y-axis Title
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x", 0 - height / 2)
+      .attr("dy", "1em")
+      .style("font-size", "14px")
+      .style("text-anchor", "middle")
+      .text("Count");
+
+    // Legend
+    const legend = svg.append("g")
+      .attr("class", "legend")
+      .attr("transform", `translate(${width - 100}, 0)`);
+
+    legend.selectAll("rect")
+      .data(categories)
+      .enter().append("rect")
+      .attr("y", (d, i) => i * 20)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", d => color(d));
+
+    legend.selectAll("text")
+      .data(categories)
+      .enter().append("text")
+      .attr("y", (d, i) => i * 20 + 9)
+      .attr("x", 25)
+      .style("text-anchor", "start")
+      .style("font-size", "12px")
+      .text(d => d);
   }
 }
 
 // Call the function to draw the chart
 drawProportionPerCountryChart();
-
-// Function to update the stacked bar chart
-function updateStackedBarChart() {
-  // You can add code to update the chart as needed
-}
