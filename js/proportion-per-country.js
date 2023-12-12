@@ -62,7 +62,13 @@ d3.csv("files/top_100_youtubers.csv").then(function (data) {
     .selectAll("text")
     .attr("transform", "rotate(-35)")
     .style("font-size", "0.8vw") // Adjust font size for better visibility
-    .style("text-anchor", "end");
+    .style("text-anchor", "end")
+    .append("text") // X-axis label
+    .attr("class", "axis-label")
+    .attr("x", width / 2)
+    .attr("y", 40)
+    .style("text-anchor", "middle")
+    .text("Country");
 
   // Stack the data per subgroup
   var stackedData = d3.stack().keys(subgroups)(data);
@@ -80,6 +86,16 @@ d3.csv("files/top_100_youtubers.csv").then(function (data) {
     .range([height, 0]);
 
   svg.append("g").call(d3.axisLeft(y));
+
+  // Y-axis label
+  svg.append("text")
+    .attr("class", "axis-label")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("Proportion");
 
   // Color palette = one color per subgroup
   var color = d3.scaleOrdinal()

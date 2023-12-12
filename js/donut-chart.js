@@ -1,5 +1,3 @@
-//styles\donut-chart.css
-
 let donutVisible = false;
 
 function toggleDonut() {
@@ -114,9 +112,9 @@ function toggleDonut() {
         // Initialize the chart.
         updateChart("Income q1");
 
-        // Create a change event for the radio buttons
-        d3.selectAll("input[name='quarter']").on("change", function() {
-            let selectedQuarter = d3.select("input[name='quarter']:checked").property("value");
+        // Create a change event for the select element
+        d3.select("#quarter").on("change", function() {
+            let selectedQuarter = d3.select("#quarter").property("value");
             updateChart(selectedQuarter);
         });
     }

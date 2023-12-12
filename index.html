@@ -8,7 +8,6 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="./styles/main.css">
-    <link rel="stylesheet" href="./styles/proportion.css">
     <link rel="stylesheet" href="./styles/donut-chart.css">
     <link rel="stylesheet" href="./styles/pie-chart.css">
     <link rel="stylesheet" href="./styles/bubble-chart.css">
@@ -32,6 +31,7 @@
     <script src="./js/total-income-card.js" defer></script>
     <script src="./js/top-channel-card.js" defer></script>
     <script src="./js/top-catagory-card.js" defer></script>
+    <script src="./js/scatter-plot.js" defer></script>
 </head>
 
 <body>
@@ -41,7 +41,7 @@
             <img src="images/logo.png" alt="Company Logo" />
         </div>
         <div class="titles">
-            <h1>Cloud Vid Statistics DashBoard</h1>
+            <h1>Statistics DashBoard</h1>
             <h2>Investigating the latest trends on YouTube</h2>
         </div>
     </header>
@@ -68,31 +68,33 @@
             <article id="donut-container" style="display: none;">
                 <div id="donut-chart" class="chart-container"></div>
                 <div id="donut-legend"></div>
-                <div class="donut-radio">
-                    <input type="radio" id="q1" name="quarter" value="Income q1" checked>
-                    <label for="q1">Quarter 1</label>
-
-                    <input type="radio" id="q2" name="quarter" value="Income q2">
-                    <label for="q2">Quarter 2</label>
-
-                    <input type="radio" id="q3" name="quarter" value="Income q3">
-                    <label for="q3">Quarter 3</label>
-
-                    <input type="radio" id="q4" name="quarter" value="Income q4">
-                    <label for="q4">Quarter 4</label>
-                </div>
+                <div class="donut-select">
+                    <label for="quarter">Select Quarter:</label>
+                    <select id="quarter" name="quarter">
+                        <option value="Income q1" selected>Quarter 1</option>
+                        <option value="Income q2">Quarter 2</option>
+                        <option value="Income q3">Quarter 3</option>
+                        <option value="Income q4">Quarter 4</option>
+                    </select>
+                </div>                
             </article>
         </fieldset>
 
         <fieldset class="two-wide">
             <legend><button onclick="mostCommonCategory();">Most Common Categories</button></legend>
-            <div id="stacked-bar-chart" class="chart-container"></div>
+            <article id="stacked-bar-chart" class="chart-container"></article>
         </fieldset>
 
-        <!-- Proportion of Top 100 YouTube Channels in Each Country -->
-        <fieldset class="two-wide">
-            <legend><button onclick="updateStackedBarChart();">Proportion of Top 100 YouTube Channels in Each Country</button></legend>
-            <div id="proportion-chart" class="chart-container"></div>
+        <fieldset>
+            <legend><button onclick="createResponsiveScatterPlot();">Views to Average Views</button></legend>
+            <article id="scatter-plot"></article>
+            <div>
+                <input type="radio" name="color" value="blue" id="steelblue" checked>
+                <label for="steelblue">Blue</label>
+                <input type="radio" name="color" value="orange" id="orange">
+                <label for="orange">Orange</label>
+            </div>
+        
         </fieldset>
 
         <section class="threeCard">
@@ -115,19 +117,25 @@
                 <h3>Most Popular Catagory</h3>
                 <p id="mostPopularCatagoryCard" class="text"></p>
             </article>
-
-            <!-- Followers to Year Started -->
-            <fieldset>
-                <legend><button onclick="getStartedYearData();">Followers to Year Started</button></legend>
-                <div id="bubble-chart" class="chart-container"></div>
-            </fieldset>
-
-            <!-- Country with the Most YouTubers in the Top 100 List -->
-            <fieldset>
-                <legend><button id="toggle-chart-btn" onClick="toggleChartVisibility()">Country with the Most YouTubers in the Top 100 List</button></legend>
-                <div id="map-chart" class="chart-container"></div>
-            </fieldset>
         </section>
+
+        <!-- Followers to Year Started -->
+        <fieldset>
+            <legend><button onclick="getStartedYearData();">Followers to Year Started</button></legend>
+            <article id="bubble-chart" class="chart-container"></article>
+        </fieldset>
+
+        <!-- Country with the Most YouTubers in the Top 100 List -->
+        <fieldset>
+            <legend><button id="toggle-chart-btn" onClick="toggleChartVisibility()">Country with the Most YouTubers in the Top 100 List</button></legend>
+            <article id="side-bar-chart" class="chart-container" style="display: none;"></article>
+        </fieldset>
+
+        <!-- Proportion of Top 100 YouTube Channels in Each Country -->
+        <fieldset class="two-wide">
+            <legend><button onclick="updateStackedBarChart();">Proportion of Top 100 YouTube Channels in Each Country</button></legend>
+            <article id="proportion-chart" class="chart-container"></article>
+        </fieldset>
 
     </main>
 

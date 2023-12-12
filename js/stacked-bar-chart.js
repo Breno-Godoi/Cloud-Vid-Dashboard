@@ -44,6 +44,7 @@ function mostCommonCategory() {
     
     // Create the svg for the graph.
     let svg = d3.select("#stacked-bar-chart")
+        .html("")
         .append("svg")
         .attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
         .attr("width", "100%")
